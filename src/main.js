@@ -1,5 +1,3 @@
-// const { id } = require("date-fns/locale");
-
 const api = axios.create({
   baseURL: "https://api.themoviedb.org/3/",
   headers: {
@@ -10,12 +8,10 @@ const api = axios.create({
   },
 });
 
-// getTrendingMoviesPreview
-async function getTrendingMoviesPreview() {
-  const { data } = await api("trending/movie/day");
-  const movies = data.results;
-  // console.log("data, movies: ", data, movies);
-  trendingMoviesPreviewList.innerHTML = "";
+// Utils/Helpers
+function createMovies(movies, container) {
+  container.innerHTML = "";
+
   movies.forEach((movie) => {
     // const trendingMoviesPreviewList = document.querySelector(
     //   "#trendingPreview .trendingPreview-movieList"
@@ -33,16 +29,12 @@ async function getTrendingMoviesPreview() {
     );
 
     movieContainer.appendChild(movieImg);
-    trendingMoviesPreviewList.appendChild(movieContainer);
+    container.appendChild(movieContainer);
   });
 }
 
-// getCategoriesPreview
-async function getCategoriesPreview() {
-  const { data } = await api("genre/movie/list");
-  const categories = data.genres;
-  // console.log("data, categories: ", data, categories);
-  categoriesPreviewList.innerHTML = "";
+function createCategories(categories, container) {
+  container.innerHTML = "";
 
   categories.forEach((category) => {
     const categoryContainer = document.createElement("div");
@@ -58,10 +50,26 @@ async function getCategoriesPreview() {
 
     categoryTitle.appendChild(categoryTitleText);
     categoryContainer.appendChild(categoryTitle);
-    categoriesPreviewList.appendChild(categoryContainer);
-    // categoryContainer.appendChild(categoryTitle);
-    // categoriesPreview.appendChild(categoryContainer);
+    container.appendChild(categoryContainer);
   });
+}
+
+// API Calls
+
+// getTrendingMoviesPreview
+async function getTrendingMoviesPreview() {
+  const { data } = await api("trending/movie/day");
+  const movies = data.results;
+
+  createMovies(movies, trendingMoviesPreviewList);
+}
+
+// getCategoriesPreview
+async function getCategoriesPreview() {
+  const { data } = await api("genre/movie/list");
+  const categories = data.genres;
+
+  createCategories(categories, categoriesPreviewList);
 }
 
 // getMoviesByCategories
@@ -73,26 +81,5 @@ async function getMoviesByCategories(id) {
   });
   const movies = data.results;
 
-  console.log("data, movies: ", data, movies);
-
-  genericSection.innerHTML = "";
-  movies.forEach((movie) => {
-    // const trendingMoviesPreviewList = document.querySelector(
-    //   "#trendingPreview .trendingPreview-movieList"
-    // );
-
-    const movieContainer = document.createElement("div");
-    movieContainer.classList.add("movie-container");
-
-    const movieImg = document.createElement("img");
-    movieImg.classList.add("movie-img");
-    movieImg.setAttribute("alt", movie.title);
-    movieImg.setAttribute(
-      "src",
-      "https://image.tmdb.org/t/p/w300" + movie.poster_path
-    );
-
-    movieContainer.appendChild(movieImg);
-    genericSection.appendChild(movieContainer);
-  });
+  createMovies(movies, genericSection);
 }

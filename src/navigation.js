@@ -11,6 +11,15 @@ arrowBtn.addEventListener("click", () => {
 window.addEventListener("DOMContentLoaded", navigator, false);
 window.addEventListener("hashchange", navigator, false);
 
+function smoothscroll() {
+  const currentScroll =
+    document.documentElement.scrollTop || document.body.scrollTop;
+  if (currentScroll > 0) {
+    window.requestAnimationFrame(smoothscroll);
+    window.scrollTo(0, currentScroll - currentScroll / 10);
+  }
+}
+
 function navigator() {
   console.log({ location });
 
@@ -25,6 +34,9 @@ function navigator() {
   } else {
     homePage();
   }
+  // document.documentElement.scrollTop = 0;
+  // window.scrollTo(0, 0);
+  smoothscroll();
 }
 
 function homePage() {
@@ -48,7 +60,6 @@ function homePage() {
 }
 
 function categoriesPage() {
-  window.scrollTo(0, 0);
   console.log("Categories!");
 
   headerSection.classList.remove("header-container--long");

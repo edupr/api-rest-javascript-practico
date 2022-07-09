@@ -1,3 +1,5 @@
+// const { id } = require("date-fns/locale");
+
 const api = axios.create({
   baseURL: "https://api.themoviedb.org/3/",
   headers: {
@@ -13,11 +15,11 @@ async function getTrendingMoviesPreview() {
   const { data } = await api("trending/movie/day");
   const movies = data.results;
   // console.log("data, movies: ", data, movies);
-
+  trendingMoviesPreviewList.innerHTML = "";
   movies.forEach((movie) => {
-    const trendingMoviesPreviewList = document.querySelector(
-      "#trendingPreview .trendingPreview-movieList"
-    );
+    // const trendingMoviesPreviewList = document.querySelector(
+    //   "#trendingPreview .trendingPreview-movieList"
+    // );
 
     const movieContainer = document.createElement("div");
     movieContainer.classList.add("movie-container");
@@ -40,18 +42,18 @@ async function getCategoriesPreview() {
   const { data } = await api("genre/movie/list");
   const categories = data.genres;
   // console.log("data, categories: ", data, categories);
+  categoriesPreviewList.innerHTML = "";
 
   categories.forEach((category) => {
-    const categoriesPreviewList = document.querySelector(
-      "#categoriesPreview .categoriesPreview-list"
-    );
-
     const categoryContainer = document.createElement("div");
     categoryContainer.classList.add("category-container");
 
     const categoryTitle = document.createElement("h3");
     categoryTitle.classList.add("category-title");
     categoryTitle.setAttribute("id", "id" + category.id);
+    categoryTitle.addEventListener("click", () => {
+      location.hash = `#category=${category.id}-${category.name}`;
+    });
     const categoryTitleText = document.createTextNode(category.name);
 
     categoryTitle.appendChild(categoryTitleText);
@@ -59,5 +61,38 @@ async function getCategoriesPreview() {
     categoriesPreviewList.appendChild(categoryContainer);
     // categoryContainer.appendChild(categoryTitle);
     // categoriesPreview.appendChild(categoryContainer);
+  });
+}
+
+// getMoviesByCategories
+async function getMoviesByCategories(id) {
+  const { data } = await api("discover/movie", {
+    params: {
+      with_genres: id,
+    },
+  });
+  const movies = data.results;
+
+  console.log("data, movies: ", data, movies);
+
+  genericSection.innerHTML = "";
+  movies.forEach((movie) => {
+    // const trendingMoviesPreviewList = document.querySelector(
+    //   "#trendingPreview .trendingPreview-movieList"
+    // );
+
+    const movieContainer = document.createElement("div");
+    movieContainer.classList.add("movie-container");
+
+    const movieImg = document.createElement("img");
+    movieImg.classList.add("movie-img");
+    movieImg.setAttribute("alt", movie.title);
+    movieImg.setAttribute(
+      "src",
+      "https://image.tmdb.org/t/p/w300" + movie.poster_path
+    );
+
+    movieContainer.appendChild(movieImg);
+    genericSection.appendChild(movieContainer);
   });
 }

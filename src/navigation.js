@@ -1,12 +1,13 @@
 searchFormBtn.addEventListener("click", () => {
-  location.hash = "#search=" + searchFormInput.value;
+  location.hash = "#search=" + searchFormInput.value.trim();
+  // location.hash = `#search=${searchFormInput.value.trim()}`;
 });
 trendingBtn.addEventListener("click", () => {
   location.hash = "#trends";
 });
 arrowBtn.addEventListener("click", () => {
   // location.hash = "#home";
-  location.hash = window.history.back();
+  history.back();
 });
 
 window.addEventListener("DOMContentLoaded", navigator, false);
@@ -102,6 +103,11 @@ function movieDetailsPage() {
   categoriesPreviewSection.classList.add("inactive");
   genericSection.classList.add("inactive");
   movieDetailSection.classList.remove("inactive");
+
+  //['#movie', 'word'] para sacar id del hash
+  const [_, movieId] = location.hash.split("=");
+  console.log("movie: ", movieId);
+  getMovieById(movieId);
 }
 
 function searchPage() {
@@ -141,4 +147,8 @@ function trendsPage() {
   categoriesPreviewSection.classList.add("inactive");
   genericSection.classList.remove("inactive");
   movieDetailSection.classList.add("inactive");
+
+  headerCategoryTitle.innerHTML = "Tendencias";
+
+  getTrendingMovies();
 }
